@@ -1,10 +1,9 @@
 $fn=200;
 
-slack = 2;
 //standard id size 85.60 × 53.98 mm
-length = 56 + slack;
-width= 85.60 + slack;
-heightCard = .75;
+length = 58;
+width= 85.60;
+heightCard = .85;
 lengthCard = 1.5;
 widthCard = 1.5;
 height = length;
