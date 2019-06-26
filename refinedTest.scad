@@ -1,12 +1,21 @@
 $fn=200;
 
-//standard id size 85.60 × 53.98 mm
-length = 58;
-width= 85.60;
-heightCard = .85;
+wallAThickness = 3.5;
+wallBThickness = 3.5;
+baseWidth = 55;
+baseCameraSideThickness = 6;
+baseCardSideThickness = 3.5;
+floorThickness = 3.5;
+baseLength = 86;
+
+length = baseLength + baseCameraSideThickness + baseCardSideThickness; // x
+width = baseWidth + wallAThickness + wallBThickness; // y
+height = length; // z
+
+heightCard = 1.75;
 lengthCard = 1.75;
 widthCard = 1.75;
-height = length;
+
 cornerRadius = 10;
 
 piBoardHeight = 1.5;
@@ -39,13 +48,13 @@ difference(){
   peiceOne();
   piCameraInPlace();
 }
-//peiceTwo();
+peiceTwo();
 
 module cardHolderSlot(){
     cube(size=[widthCard, lengthCard, height-4]);
 }
 module piCameraInPlace(){
-    translate([width+piBoardHeight,length-16,height-piCameraLength+10]){
+    translate([length+0.5,(width/2)+(piCameraWidth/2),(height/3)+piCameraLength]){
         rotate(a=[0,90,180]) {
             piCamera();
         }
@@ -85,10 +94,10 @@ module mountingHole(){
 
 module peiceOne(){
     difference() {
-        squareBox(length, width, height);
-        translate([3,2,2]){
+        squareBox(width, length, height);
+        translate([wallAThickness, wallBThickness, floorThickness]){
             difference() {
-                squareBox(length-4, width-7, height);
+                squareBox(baseWidth, baseLength, height);
                 slots();                                            
             }
         }
@@ -99,31 +108,29 @@ module slots(){
     translate([heightCard,0,0]){
         cardHolderSlot();
      }
-    translate([heightCard,length-5.5,0]){
+    translate([heightCard,baseWidth-wallBThickness+widthCard,0]){
         cardHolderSlot();
      }
 }
 
 module peiceTwo(){
-    translate([width*2.5, 10, 0]){
-        mirror([1,0,0]) {
-            squareBox(length, width, 1);
+    translate([0, width*2.5, 0]){
+        mirror([0,1,0]) {
+            squareBox(width, length, wallAThickness/2);
             difference() {
-                translate([1,1,0]) {
-                    squareBox(length-2, width-8, 4);
+                translate([wallAThickness, baseCardSideThickness,wallAThickness/2]) {
+                    squareBox(baseWidth, baseLength, 4);
                 }
-                translate([5,4,0]) {
-                    squareBox(length-4, width-12, 4);
-                }    
+                translate([wallAThickness, baseCardSideThickness,wallAThickness/2]) {
+                    squareBox(baseWidth-wallAThickness, baseLength-4, 4);
+                }
             }
         }
     }
 }
 
 module squareBox(length, width, height){
-    minkowski() {
-        cube(size=[width, length, height]);
-    }
+    cube(size=[width, length, height]);
 }
 
 module roundedBox(length, width, height, radius)
