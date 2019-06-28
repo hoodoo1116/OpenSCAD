@@ -8,9 +8,12 @@ baseCardSideThickness = 3.5;
 floorThickness = 3.5;
 baseLength = 86;
 
+modifierPercent = 0.20;
 length = baseLength + baseCameraSideThickness + baseCardSideThickness; // x
 width = baseWidth + wallAThickness + wallBThickness; // y
 height = length; // z
+
+lidHeight = 4;
 
 heightCard = 1.75;
 lengthCard = 1.75;
@@ -51,7 +54,8 @@ difference(){
 peiceTwo();
 
 module cardHolderSlot(){
-    cube(size=[widthCard, lengthCard, height-4]);
+    modHeight = height - (height * modifierPercent);
+    cube(size=[widthCard, lengthCard, modHeight-lidHeight-floorThickness]);
 }
 module piCameraInPlace(){
     translate([length+0.5,(width/2)+(piCameraWidth/2),(height/3)+piCameraLength]){
@@ -94,10 +98,11 @@ module mountingHole(){
 
 module peiceOne(){
     difference() {
-        squareBox(width, length, height);
+        modHeight = height-(height * modifierPercent);
+        squareBox(width, length, modHeight);
         translate([wallAThickness, wallBThickness, floorThickness]){
             difference() {
-                squareBox(baseWidth, baseLength, height);
+                squareBox(baseWidth, baseLength, modHeight);
                 slots();                                            
             }
         }
@@ -116,14 +121,21 @@ module slots(){
 module peiceTwo(){
     translate([0, width*2.5, 0]){
         mirror([0,1,0]) {
-            squareBox(width, length, wallAThickness/2);
             difference() {
-                translate([wallAThickness, baseCardSideThickness,wallAThickness/2]) {
-                    squareBox(baseWidth, baseLength, 4);
+                squareBox(width, length, 2);
+                translate([wallAThickness,baseCardSideThickness,-1]){
+                    squareBox(baseWidth, widthCard,lidHeight+2);
                 }
-                translate([wallAThickness, baseCardSideThickness,wallAThickness/2]) {
-                    squareBox(baseWidth-wallAThickness, baseLength-4, 4);
+            }
+            color("purple") difference() {  
+                translate([baseCardSideThickness+lengthCard,wallAThickness,2]){
+                    squareBox(baseWidth, baseLength-lengthCard, lidHeight);}
+                translate([baseCardSideThickness+2-lengthCard,wallAThickness+2,2]) {
+                    squareBox(baseWidth-4, baseLength+lengthCard-4, lidHeight+2);
                 }
+            }
+            translate([wallAThickness+widthCard,baseCardSideThickness+2,2]){
+             color("purple") squareBox(baseWidth-4, 2,lidHeight);
             }
         }
     }
